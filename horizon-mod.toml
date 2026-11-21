@@ -1,0 +1,45 @@
+id = "fabrishot"
+name = "Fabrishot"
+version = "1.0.1"
+description = """Exact 1:1 Rust translation of [Fabrishot](https://github.com/ramidzkh/fabrishot)
+(upstream Java, MIT (c) 2021 Ramid Khan). Carries the upstream license and credit.
+
+Ported for the Horizon client by sparticle.
+
+High-resolution, delay-timed screenshots with custom file names and formats:
+the F9 screenshot key runs the original's CaptureTask state machine (HUD
+hide, the frame-count delay, the resolution swap/restore), the file naming
+carries the original's `%time%`/`%world%` substitution and the suffix loop
+verbatim (including the `_3` second candidate), and the writer encodes and
+saves real frames in the original's four formats (PNG, JPG at quality 90,
+TGA, BMP). With `override_screenshot_key` on, the vanilla F2 screenshot
+feeds the mod's naming, message and format instead of vanilla's own save.
+
+Live on the mod API: the seven config entries as settings (upstream labels,
+same defaults, `custom_file_name` file-held), the CaptureTask state machine
+driven from the F9 key and the render frame post hook, and the F2 override.
+
+Pending host wires (tracked in seams.rs): no framebuffer resize/read at the
+modded resolution (the 4K upscale waits for a surface), no world-name read
+(`%world%` rides the original's own `no_world` branch), no wall-clock read
+(the timestamp is UTC), the chat line's underline and click-to-open and the
+narrator line.
+
+Pinned to Horizon f00125f61f794aaa3d4e950d301f353b35b6ee3d and
+horizon-mixins e59da9094f0c2fdda6c627fe9eff22dec6a906f0, mod api 0.2; exact
+1:1 Rust port tested against those revisions (8 tests).
+
+Licence: MIT (LICENSE carries the upstream text). Source:
+https://github.com/Sparticle62ops/horizon-fabrishot
+"""
+authors = ["Ramid Khan", "sparticle"]
+license = "MIT"
+homepage = "https://github.com/Sparticle62ops/horizon-fabrishot"
+api = "0.2"
+side = "client"
+capabilities = ["registries"]
+
+[native]
+game = "26.3"
+horizon = "f00125f61f794aaa3d4e950d301f353b35b6ee3d"
+mixins = "e59da9094f0c2fdda6c627fe9eff22dec6a906f0"

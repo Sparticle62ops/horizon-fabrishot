@@ -1,42 +1,44 @@
-# fabrishot (Horizon port)
+# Horizon Fabrishot
 
-A Rust port of [fabrishot](https://github.com/ramidzkh/fabrishot) (MIT,
-(c) 2021 Ramid Khan, itself a Fabric port of ata4's mineshot), which takes
-screenshots at a custom resolution far above the window size: it swaps the
-game window to the configured width and height for a few frames, hides the
-HUD on request, then captures the framebuffer and writes the image out.
+An exact 1:1 Rust translation of [Fabrishot](https://github.com/ramidzkh/fabrishot)
+by Ramid Khan (upstream Java, MIT (c) 2021 Ramid Khan). Carries the upstream
+license and credit. Ported for the Horizon client by sparticle.
 
-## Ported (logic core)
+High-resolution, delay-timed screenshots with custom file names and
+formats: the F9 screenshot key runs the original's CaptureTask state
+machine (HUD hide, the frame-count delay, the resolution swap/restore),
+the file naming carries the original's `%time%`/`%world%` substitution and
+the suffix loop verbatim (including the `_3` second candidate), and the
+writer encodes and saves real frames in the original's four formats
+(PNG, JPG at quality 90, TGA, BMP).
 
-- All eight config values with the original defaults (custom_file_name
-  `huge_%time%`, override_screenshot_key off, hide_hud off, save_file on,
-  3840x2160, delay 3, PNG), loaded and saved as
-  `fabrishot.properties`-style key=value lines with upstream's all-or-nothing
-  fallback to defaults on a bad line.
-- The output filename: the screenshots directory, the `%time%` and `%world%`
-  placeholders with the `no_world` fallback, and the no-clobber suffix loop,
-  preserving upstream's exact suffix sequence (first file plain, then _3,
-  _4, ... because the Java increment order never fills the _2 slot).
-- The capture state machine: the resolution swap with bookkeeping for the
-  restore, the delay frame count, and the HUD hide/restore around the
-  capture frame.
-- The FileFormat set (PNG, JPG, TGA, BMP) with upstream's extensions.
+## Build
 
-## Horizon seams
+```
+cargo test --release   # 8 tests, green
+```
 
-The heart of fabrishot is the framebuffer read, and Horizon has no screenshot
-hook yet: the client's own screenshot path supports a custom capture size
-(`ScreenshotRequest` carries `size`), but no native mod can request a capture.
-There is also no image encode/write surface a mod could drive. Everything
-around it is here and 1:1: the config, the filename logic, and the capture
-driver's frame state machine, so the port fires the moment a capture surface
-lands.
+Pinned to Horizon `f00125f61f794aaa3d4e950d301f353b35b6ee3d` and
+horizon-mixins `e59da9094f0c2fdda6c627fe9eff22dec6a906f0`, mod api 0.2.
 
-- Filed on horizon-rust/horizon per standing policy
-  ([#9606](https://github.com/horizon-rust/horizon/issues/9606)); tracked
-  until patched, then the port upgrades to full 1:1.
+## How the capture rides the mod API
 
-## License
+The F9 key mapping starts the task; the render frame post hook drives
+`onRenderTick`; the vanilla F2 screenshot hook carries the override path
+(`override_screenshot_key` on: the vanilla read feeds the mod's file name,
+format and `screenshot.success` message). The framebuffer resize and the
+modded-resolution read have no mod API surface yet, so the F9 task's
+capture frame completes with the file chosen and the F2 hook path is the
+live capture (README seams below).
 
-Upstream fabrishot: MIT (c) 2021 Ramid Khan. This port carries the same
-license; see LICENSE.
+## Known seams (engine-stage; tracked)
+
+- No framebuffer resize/read at the modded resolution (the 4K upscale
+  waits for a surface).
+- No world-name read (`%world%` rides `no_world`).
+- No wall-clock read (the timestamp is UTC).
+- The chat line's underline and click-to-open, and the narrator line.
+- `custom_file_name` stays file-held in `config/fabrishot.properties`
+  (no string setting kind).
+
+Licence: MIT (LICENSE carries the upstream text).
