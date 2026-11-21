@@ -248,7 +248,7 @@ dependencies = [
 
 [[package]]
 name = "horizon-mod-fabrishot"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "horizon-mod-api",
  "image",

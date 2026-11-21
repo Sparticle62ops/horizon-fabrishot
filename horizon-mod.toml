@@ -1,6 +1,6 @@
 id = "fabrishot"
 name = "Fabrishot"
-version = "1.0.1"
+version = "1.0.2"
 description = """Exact 1:1 Rust translation of [Fabrishot](https://github.com/ramidzkh/fabrishot)
 (upstream Java, MIT (c) 2021 Ramid Khan). Carries the upstream license and credit.
 
