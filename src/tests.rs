@@ -1,6 +1,5 @@
 //! Tests against the upstream ground truth (Ramid Khan's Java, read 1:1).
 
-use super::{Frame, write};
 use crate::config::{Config, FileFormat, load as load_properties, save as save_properties};
 use crate::capture::{
     CaptureTask, format_filename_datetime, get_screenshot_file, print_file_link_text, write, Frame,
